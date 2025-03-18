@@ -15,19 +15,29 @@ bx = 0
 by = 0
 wdx = 0
 wdy = 0
+hist = [(0,0),(0,0),(0,0),(0,0),(0,0)]
 
 def window_to_screenx(x):
     return (monitor_width/2 - x)
 def window_to_screeny(y, h):
     return (y - monitor_height/2 + h)
+def scoot(mylist, pos):
+    mylist.pop(0)
+    mylist.append(pos)
+    return mylist
+def avglist(mylist):
+    x_start, y_start = mylist[0]
+    x_end, y_end = mylist[-1]
+
+    return x_end - x_start, y_end - y_start
 class BouncingBall(arcade.Window):
     def __init__(self):
         super().__init__(width, height, "ball", resizable=True)
         self.ball_screen_x = window_to_screenx(width // 2)
         self.ball_screen_y = window_to_screeny(height // 2, blaheight[1])
         self.ball_radius = 20
-        self.dx = -4
-        self.dy = -4
+        self.dx = -2
+        self.dy = -2
         self.set_update_rate(1/60)
 
     def on_draw(self):
@@ -36,32 +46,36 @@ class BouncingBall(arcade.Window):
         self.ball = arcade.draw_circle_filled(bx, by, self.ball_radius, arcade.color.RED)
         self.flip()
     def on_update(self, _delta_time):
+        global window_x, window_y, blaheight
+        global bx, by
+        global wdx, wdy, hist
+
         self.dy += grav
         self.ball_screen_x += self.dx
         self.ball_screen_y += self.dy
-        global window_x, window_y, blaheight
-        global bx, by
-        global wdx, wdy
-        #all you gotta do now is track the window position over time, get the velocity of it, and check during collisions if the window is moving, then apply that force to the ball when necessary
-
         
         blaheight = self.get_size()
         window_x, window_y = self.get_location()
         bx, by = window_to_screenx(window_x + self.ball_screen_x), window_to_screeny(window_y - self.ball_screen_y, blaheight[1])
-
+        hist = scoot(hist, (window_x, window_y))
+        wdx, wdy = avglist(hist)
         twidth, theight = blaheight
         if bx > twidth - self.ball_radius:
             self.dx *= loss
             self.dx = self.dx * -1
+            self.dx -= (wdx / 2)
         if bx < 0 + self.ball_radius:
             self.dx *= loss
             self.dx = self.dx * -1
+            self.dx -= (wdx / 2)
         if by > theight - self.ball_radius:
             self.dy = self.dy * -1
             self.dy *= loss
+            self.dy += (wdy / 2)
         if by < 0 + self.ball_radius:
             self.dy = self.dy * -1
             self.dy *= loss
+            self.dy += (wdy / 2)
 if __name__ == "__main__":
     game = BouncingBall()
     arcade.run()
