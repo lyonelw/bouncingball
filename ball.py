@@ -65,19 +65,24 @@ class BouncingBall(arcade.Window):
             self.dx *= loss
             self.dx = self.dx * -1
             self.dx -= (wdx / 2)
+            #self.dy += (wdy / 4)
         if bx < 0 + self.ball_radius:
             self.dx *= loss
             self.dx = self.dx * -1
             self.dx -= (wdx / 2)
+            #self.dy += (wdy / 4)
         if by > theight - self.ball_radius:
             self.dy = self.dy * -1
             self.dy *= loss
             self.dy += (wdy / 2)
+            #self.dx += (wdx / 4)
         if by < 0 + self.ball_radius:
             self.dy = self.dy * -1
             self.dy *= loss
             self.dy += (wdy / 2)
-        if bx > twidth + self.ball_radius * 2:
+            #self.dx += (wdx / 4)
+        #stoppages
+        """if bx > twidth + self.ball_radius * 2:
             self.dx = 0
             self.dy = 0
         if bx < 0 - self.ball_radius * 2:
@@ -88,7 +93,8 @@ class BouncingBall(arcade.Window):
             self.dy = 0
         if by < 0 - self.ball_radius * 2:
             self.dx = 0
-            self.dy = 0
+            self.dy = 0"
+            """
 if __name__ == "__main__":
     game = BouncingBall()
     arcade.run()
