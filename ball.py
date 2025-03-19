@@ -9,7 +9,7 @@ monitor_height = user32.GetSystemMetrics(1)
 window_x = 0
 window_y = 0
 blaheight = (0, 0)
-grav = 1
+grav = 0.1
 loss = 0.8
 bx = 0
 by = 0
@@ -38,19 +38,19 @@ class BouncingBall(arcade.Window):
         self.ball_radius = 20
         self.dx = -1
         self.dy = -1
-        self.set_update_rate(1/60)
+        self.set_update_rate(1/144)
 
     def on_draw(self):
         arcade.Window.clear(self)
         global bx, by
         self.ball = arcade.draw_circle_filled(bx, by, self.ball_radius, arcade.color.RED)
-        self.flip()
     def on_update(self, _delta_time):
         global window_x, window_y, blaheight
         global bx, by
         global wdx, wdy, hist
+        print(f"x: {self.dx} || y:{self.dy}")
         #FIX GRAVITY SO YOU DONT FUCKING SUCK
-        if self.dy < 0.1 or self.dy > -0.1: self.dy += grav
+        self.dy += grav
 
         self.ball_screen_x += self.dx
         self.ball_screen_y += self.dy
@@ -77,6 +77,18 @@ class BouncingBall(arcade.Window):
             self.dy = self.dy * -1
             self.dy *= loss
             self.dy += (wdy / 2)
+        if bx > twidth + self.ball_radius * 2:
+            self.dx = 0
+            self.dy = 0
+        if bx < 0 - self.ball_radius * 2:
+            self.dx = 0
+            self.dy = 0
+        if by > theight + self.ball_radius * 2:
+            self.dx = 0
+            self.dy = 0
+        if by < 0 - self.ball_radius * 2:
+            self.dx = 0
+            self.dy = 0
 if __name__ == "__main__":
     game = BouncingBall()
     arcade.run()
